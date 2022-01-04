@@ -5,8 +5,8 @@ st.write("""
 	# My first app
 	Hello *world!*
 	""")
-st.title("Streamlit sliders")
-st.subheader("Slider 1:")
+st.title("Simulation de prêt")
+st.subheader("Obtenez une réponse imédiate:")
 x = st.slider('a number between 0-100')
 
 st.write("Slider number:", x)
