@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 #import seaborn as sns
 from PIL import Image
-import matplotlib.pyplot as plt
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-import plotly.express as px
-import plotly
-import shap
-from urllib.request import urlopen
+#import matplotlib.pyplot as plt
+#from plotly.subplots import make_subplots
+#import plotly.graph_objects as go
+#import plotly.express as px
+#import plotly
+#import shap
+#from urllib.request import urlopen
 
 
 st.set_page_config(layout='wide')
