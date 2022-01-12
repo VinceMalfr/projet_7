@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
+#import seaborn as sns
 from PIL import Image
 import matplotlib.pyplot as plt
 from plotly.subplots import make_subplots
