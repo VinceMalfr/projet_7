@@ -11,12 +11,14 @@ import shap
 from urllib.request import urlopen
 import json
 import pickle 
+from sklearn.neighbors import NearestNeighbors
+
 
 
 st.set_page_config(layout='wide')
 
 ## Importations des bases de données 
-#df = pd.read_csv('client_information_sample.csv', index_col='SK_ID_CURR', encoding='utf-8')
+df = pd.read_csv('client_information.csv', index_col='SK_ID_CURR', encoding='utf-8')
 data = pd.read_csv("X_dash.csv", index_col='SK_ID_CURR', encoding='utf-8' )
 sample = pd.read_csv("client_information_sample.csv", index_col='SK_ID_CURR', encoding='utf-8' )
 
@@ -69,11 +71,12 @@ client_age = info_client["YEARS_BIRTH"]
 client_education = info_client["NAME_EDUCATION_TYPE"]
 client_revenu = info_client["AMT_INCOME_TOTAL"]
 client_emploi = info_client['YEARS_EMPLOYED']
+#client_revenu = info_client[info_client['AMT_INCOME_TOTAL'] < 50000 ]
 
 col1, col2 = st.columns(2)
 with col1:
 	## Genre
-	st.markdown("<u>Sexe:</u>", unsafe_allow_html=True)
+	st.markdown("<u>Sexes:</u>", unsafe_allow_html=True)
 	st.text(client_genre)
 with col2:
 	## Age
@@ -155,7 +158,6 @@ else :
 if selection == 'Individuelle':
 	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque</h2>", unsafe_allow_html=True)
 	shap.initjs()
-	#X = sample.iloc[:, :-1]
 	X = sample[sample.index == user_input]
 
 	fig, ax = plt.subplots(figsize=(10, 10))
@@ -165,12 +167,35 @@ if selection == 'Individuelle':
 	st.pyplot(fig)
 
 
+	row_to_show = X
+	data_for_prediction = sample.iloc[row_to_show]
 
-explainer = shap.TreeExplainer(load_model())
-shap_values = explainer.shap_values(X)
-shap.initjs()
-test = shap.force_plot(explainer.expected_value[1], shap_values[1], X)
-st.pyplot(test)
+	fig, ax = plt.subplots()
+	explainer = shap.TreeExplainer(load_model())
+	shap_values = explainer.shap_values(data_for_prediction)
+	shap.initjs()
+	shap.force_plot(explainer.expected_value[0], shap_values[0], data_for_prediction)
+	st.pyplot(fig)
+	
+
+
+if selection == 'Globale':
+	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque de la classe 0</h2>", unsafe_allow_html=True)
+	fig, ax = plt.subplots()
+	explainer = shap.TreeExplainer(load_model())
+	shap_values = explainer.shap_values(df)
+	shap.summary_plot(shap_values, df, max_display=10)
+	st.pyplot(fig)
+
+	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque de la classe 0</h2>", unsafe_allow_html=True)
+	fig, ax = plt.subplots(figsize=(10, 10))
+	explainer = shap.TreeExplainer(load_model())
+	shap_values = explainer.shap_values(df)
+	shap.summary_plot(shap_values[0], df)
+	st.pyplot(fig)
+
+
+#if selection == 'Profils similaires':
 
 
 
