@@ -9,6 +9,8 @@ import plotly.express as px
 import plotly
 import shap
 from urllib.request import urlopen
+import json
+import pickle 
 
 
 st.set_page_config(layout='wide')
@@ -27,7 +29,13 @@ def credit_factors(model, patient,data):
     shap.initjs()
     return shap.force_plot(explainer.expected_value[1], shap_values[1], patient)
 
+def load_model():
+    '''loading the trained model'''
+    pickle_in = open('/Users/vincentMalfroy/Documents/GitHub/projet_7/LGBM.pkl', 'rb') 
+    clf = pickle.load(pickle_in)
+       
 
+    return clf
 
 
 
@@ -119,44 +127,50 @@ if check :
 	### Validation du pret
 st.markdown("# Validation du prêt")
 st.write(' Seuil de solvabilité avant defaut de paiment (réglé à 50%)') 
-#st.write("Le score obtenu est de :", (info_client['TARGET']*100).round(0),'%')
-#loanResult = 'Status du prêt:' 
-##if info_client['TARGET'] <= 0.45 :
-	#loanResult += " Validé !"
-	#st.success(loanResult)
-#else :
-	#loanResult += " Refusé..."
-	#st.error(loanResult)
-
-
-#if selection == 'Individuelle':
-	#st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque</h2>", unsafe_allow_html=True)
-	#data_for_prediction = df[df["SK_ID_CURR"]==user_input].index
-	#credit_factors(clf.predict_proba, data_for_prediction,df)
-	#st.pyplot(credit_factors)
 
 
 # Appel de l'API :
-API_url = "http://127.0.0.1:5000/credit/" + str(user_input) 
+API_url = "http://localhost:5000/credit/" + str(user_input) 
 
 with st.spinner('Chargement du score client...'):
 	json_url = urlopen(API_url) 
 
 	API_data = json.loads(json_url.read())
-	prediction = API_data['client risk in %']
-	st.write("**Default risk probability : **{:.0f} %".format(round(float(prediction), 3)))
+	prediction = API_data['Risque client en %']
+	st.write("**Risque de défaut client : **{:.0f} %".format(round(float(prediction), 2)))
 
 #Compute decision according to the best threshold 50% (it's just a guess)
+loanResult = 'Status du prêt:' 
 if prediction <= 50.0 :
-    decision = "<font color='green'>**LOAN GRANTED**</font>" 
-else:
-    decision = "<font color='red'>**LOAN REJECTED**</font>"
+	loanResult += " Validé !"
+	st.success(loanResult)
+else :
+	loanResult += " Refusé..."
+	st.error(loanResult)
 
-st.write("**Decision** *(with threshold 50%)* **: **", decision, unsafe_allow_html=True)
+
     
 
 
+if selection == 'Individuelle':
+	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque</h2>", unsafe_allow_html=True)
+	shap.initjs()
+	#X = sample.iloc[:, :-1]
+	X = sample[sample.index == user_input]
 
+	fig, ax = plt.subplots(figsize=(10, 10))
+	explainer = shap.TreeExplainer(load_model())
+	shap_values = explainer.shap_values(X)
+	shap.summary_plot(shap_values[0], X, plot_type ="bar", color_bar=True, plot_size=(5, 5))
+	st.pyplot(fig)
+
+
+
+explainer = shap.TreeExplainer(load_model())
+shap_values = explainer.shap_values(X)
+shap.initjs()
+test = shap.force_plot(explainer.expected_value[1], shap_values[1], X)
+st.pyplot(test)
 
 
 
