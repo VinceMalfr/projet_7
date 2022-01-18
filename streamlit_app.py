@@ -162,8 +162,8 @@ st.write(' Seuil de solvabilité avant defaut de paiment (réglé à 50%)')
 
 
 # Appel de l'API :
-API_url = "http://localhost:5000/credit/" + str(user_input) 
-
+#API_url = "http://localhost:5000/credit/" + str(user_input) 
+API_url = "https://api-banque-pret.herokuapp.com/credit/" + str(user_input)
 with st.spinner('Chargement du score client...'):
 	json_url = urlopen(API_url) 
 
