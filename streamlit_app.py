@@ -11,6 +11,7 @@ import json
 import pickle 
 from sklearn.neighbors import NearestNeighbors
 from sklearn.cluster import KMeans
+from zipfile import ZipFile
 
 
 
@@ -18,9 +19,14 @@ from sklearn.cluster import KMeans
 st.set_page_config(layout='wide')
 
 ## Importations des bases de données 
-df = pd.read_csv('client_information.csv', encoding='utf-8').set_index('SK_ID_CURR')
-data = pd.read_csv("X_dash.csv", encoding='utf-8' ).set_index('SK_ID_CURR')
-sample = pd.read_csv("client_information_sample.csv", encoding='utf-8' ).set_index('SK_ID_CURR')
+zip = ZipFile('client_information.zip')
+df = pd.read_csv(zip.open('client_information.csv'), encoding='utf-8').set_index('SK_ID_CURR')
+
+zip = ZipFile('X_dash.zip') 
+data = pd.read_csv(zip.open("X_dash.csv"), encoding='utf-8' ).set_index('SK_ID_CURR')
+
+zip = ZipFile('client_information_sample.zip') 
+sample = pd.read_csv(zip.open("client_information_sample.csv"), encoding='utf-8' ).set_index('SK_ID_CURR')
 
 id_client = sample.index.values
 
