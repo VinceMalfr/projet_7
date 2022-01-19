@@ -5,10 +5,6 @@ import pandas as pd
 import seaborn as sns
 from PIL import Image
 import matplotlib.pyplot as plt
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-import plotly.express as px
-import plotly
 import shap
 from urllib.request import urlopen
 import json
@@ -59,12 +55,6 @@ def load_kmeans(sample, id, modele):
     df_neighbors = pd.DataFrame(knn.fit_predict(data_client), index=data_client.index)
     df_neighbors = pd.concat([df_neighbors, data], axis=1)
     return df_neighbors.iloc[:,2:].sample(5)
-
-
-
-#EXT_SOURCE_3 EXT_SOURCE_2 CREDIT_TERM AMT_GOODS_PRICE  EXT_SOURCE_1 AMT_CREDIT 
-# YEARS_BIRTH AMT_INCOME_TOTAL
-
 
 ################## SIDEBAR ######################
 
@@ -230,7 +220,6 @@ if selection == 'Profils similaires':
                                     'AMT_GOODS_PRICE', 'EXT_SOURCE_1', 'AMT_CREDIT',
                                     'YEARS_BIRTH', 'AMT_INCOME_TOTAL'])
 	df_client = df_client.T
-	#df_client = pd.DataFrame(df_client, columns=['Client'])
 
 	df_client = df_voisin.join(df_client)
 	
