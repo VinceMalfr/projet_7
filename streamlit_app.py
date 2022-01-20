@@ -220,6 +220,8 @@ if selection == 'Profils similaires':
                                     'YEARS_BIRTH', 'AMT_INCOME_TOTAL'])
 	
 	df_voisin = pd.DataFrame(df_voisin.mean(), columns=['Moyenne_profil_similaire'])
+	
+	st.write(df_voisin.shape)
 
 	df_client = (data.loc[data.index == user_input])
 	df_client = df_client.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'CREDIT_TERM',
