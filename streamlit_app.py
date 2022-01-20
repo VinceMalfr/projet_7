@@ -61,7 +61,7 @@ def load_kmeans(sample, id, modele):
     data_client = pd.DataFrame(sample.loc[sample.index, :])
     df_neighbors = pd.DataFrame(knn.fit_predict(data_client), index=data_client.index)
     df_neighbors = pd.concat([df_neighbors, data], axis=1)
-    return df_neighbors.iloc[:,2:].sample(5)
+    return df_neighbors.iloc[:,2:]
 
 ################## SIDEBAR ######################
 
