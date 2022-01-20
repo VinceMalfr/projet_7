@@ -30,6 +30,15 @@ sample = pd.read_csv(zip.open("client_information_sample.csv"), encoding='utf-8'
 
 id_client = sample.index.values
 
+@st.cache
+def load_model():
+    '''loading the trained model'''
+    pickle_in = open('LGBM.pkl', 'rb') 
+    clf = pickle.load(pickle_in)
+       
+
+    return clf
+
 
 # Entrainement d'un modèle kMeans 
 @st.cache
