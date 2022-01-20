@@ -230,6 +230,6 @@ if selection == 'Profils similaires':
 	df_client = df_voisin.join(df_client)
 	
 	
-	st.dataframe(round(df_client,2)
+	st.dataframe(round(df_client,2))
 	
 	
