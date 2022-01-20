@@ -221,7 +221,7 @@ if selection == 'Profils similaires':
 	
 	df_voisin = pd.DataFrame(df_voisin.mean(), columns=['Moyenne_profil_similaire'])
 	
-	st.write(df_voisin.shape)
+	st.write(data_kmeans.shape)
 
 	df_client = (data.loc[data.index == user_input])
 	df_client = df_client.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'CREDIT_TERM',
