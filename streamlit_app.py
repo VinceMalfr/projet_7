@@ -214,8 +214,7 @@ if selection == 'Profils similaires':
 	data_kmeans = load_kmeans(sample, user_input, knn)
 	#data_kmeans = data_kmeans.drop(columns=['Unnamed: 0'])
 
-	st.markdown("<u>Liste des 5 dossiers les plus proches du client :</u>", unsafe_allow_html=True)
-	st.dataframe(data_kmeans)
+
 	df_voisin = data_kmeans.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'CREDIT_TERM',
                                     'AMT_GOODS_PRICE', 'EXT_SOURCE_1', 'AMT_CREDIT',
                                     'YEARS_BIRTH', 'AMT_INCOME_TOTAL'])
@@ -230,5 +229,8 @@ if selection == 'Profils similaires':
 
 	df_client = df_voisin.join(df_client)
 	
+	df_client = round(df_client,2)
+	
 	st.dataframe(df_client)
+	
 	
