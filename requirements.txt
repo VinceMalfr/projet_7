@@ -10,3 +10,4 @@ seaborn == 0.11.2
 matplotlib == 3.5.0
 shap == 0.40.0
 cloudpickle==2.0.0
+lightgbm==3.3.2
