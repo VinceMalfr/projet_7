@@ -184,11 +184,11 @@ if selection == 'Individuelle':
 	shap.initjs()
 	X = sample[sample.index == user_input]
 
-	#fig, ax = plt.subplots()
-	#explainer = shap.TreeExplainer(load_model())
-	#shap_values = explainer.shap_values(X)
-	#shap.summary_plot(shap_values, X, max_display=15, plot_size=(5,5))
-	#st.pyplot(fig)
+	fig, ax = plt.subplots()
+	explainer = shap.TreeExplainer(load_model())
+	shap_values = explainer.shap_values(X)
+	shap.summary_plot(shap_values, X, max_display=15, plot_size=(5,5))
+	st.pyplot(fig)
 
 	fig, ax = plt.subplots(figsize=(5,5))
 	explainer = shap.TreeExplainer(load_model())
@@ -229,8 +229,7 @@ if selection == 'Profils similaires':
 
 	df_client = df_voisin.join(df_client)
 	
-	df_client = round(df_client,2)
 	
-	st.dataframe(df_client)
+	st.dataframe(round(df_client,2)
 	
 	
