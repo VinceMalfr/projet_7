@@ -42,27 +42,6 @@ def load_model():
     return clf
 
 
-# Entrainement d'un modèle kMeans 
-@st.cache
-def knn_training(sample):
-    knn = KMeans(n_clusters=2).fit(sample)
-    return knn 
-
-@st.cache(allow_output_mutation=True)
-def load_knn(sample):
-    knn = knn_training(sample)
-    return knn
-
-
-@st.cache
-def load_kmeans(sample, id, modele):
-    index = sample[sample.index == int(id)].index.values
-    index = index[0]
-    data_client = pd.DataFrame(sample.loc[sample.index, :])
-    df_neighbors = pd.DataFrame(knn.fit_predict(data_client), index=data_client.index)
-    df_neighbors = pd.concat([df_neighbors, data], axis=1)
-    return df_neighbors.iloc[:,2:]
-
 ################## SIDEBAR ######################
 
 st.sidebar.image('logo.png')
@@ -88,6 +67,7 @@ st.write("**Information sur le client n°**",user_input)
 	####### Informations sur le client sélectionnée
 client_genre = info_client["CODE_GENDER"]
 client_age = info_client["YEARS_BIRTH"]
+client_age_binned = info_client['YEARS_BINNED']
 client_education = info_client["NAME_EDUCATION_TYPE"]
 client_revenu = info_client["AMT_INCOME_TOTAL"]
 client_emploi = info_client['YEARS_EMPLOYED']
@@ -157,9 +137,7 @@ with col9:
 st.markdown("# Validation du prêt")
 st.write(' Seuil de solvabilité avant defaut de paiment (réglé à 50%)') 
 
-
 # Appel de l'API :
-#API_url = "http://localhost:5000/credit/" + str(user_input) 
 API_url = "https://api-banque-pret.herokuapp.com/credit/" + str(user_input)
 with st.spinner('Chargement du score client...'):
 	json_url = urlopen(API_url) 
@@ -207,31 +185,44 @@ if selection == 'Globale':
 	st.image('le taux de risque.png')
 
 
+
+
+
+
+
 if selection == 'Profils similaires':
-	st.markdown("<h2 style='text-align: center;'>Comparaison des caractéristiques avec un echantillon de client au profils similaires</h2>", unsafe_allow_html=True)
+	st.markdown("<h2 style='text-align: center;'>Comparaison des caractéristiques avec un echantillon de client au profils similaires</h2>", unsafe_allow_html=True)	
 	
-	knn = load_knn(sample)
-	data_kmeans = load_kmeans(sample, user_input, knn)
-	#data_kmeans = data_kmeans.drop(columns=['Unnamed: 0'])
+	#PROCHE VOISIN
+	contrat_v=data[data['NAME_CONTRACT_TYPE']==client_contrat]
+	genre_v=contrat_v[contrat_v['CODE_GENDER']==client_genre]
+	education_v=genre_v[genre_v['NAME_EDUCATION_TYPE']==client_education]
+	age_v=education_v[education_v['YEARS_BINNED']==client_age_binned]
 
+	if len(age_v) <15:
+		set_client_voisin=age_v.sample(len(age_v), random_state=42)
+	if len(age_v) >= 15:
+		set_client_voisin=age_v.sample(15,random_state=42)
+	
+	
+	st.write('En fonction des caractéristiques socio-demographiques similaire (age, genre, education, type de contrat)')
+	
 
-	df_voisin = data_kmeans.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'CREDIT_TERM',
-                                    'AMT_GOODS_PRICE', 'EXT_SOURCE_1', 'AMT_CREDIT',
+	df_voisin = set_client_voisin.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'EXT_SOURCE_1', 'CREDIT_TERM',
+                                    'AMT_GOODS_PRICE', 'AMT_CREDIT',
                                     'YEARS_BIRTH', 'AMT_INCOME_TOTAL'])
 	
-	df_voisin = pd.DataFrame(df_voisin.mean(), columns=['Moyenne_profil_similaire'])
-	
-	st.write(data_kmeans.shape)
+	df_voisin = pd.DataFrame(df_voisin.mean(), columns=['Moyenne_profil_similaire (N=15)'])
 
 	df_client = (data.loc[data.index == user_input])
-	df_client = df_client.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'CREDIT_TERM',
-                                    'AMT_GOODS_PRICE', 'EXT_SOURCE_1', 'AMT_CREDIT',
+	df_client = df_client.reindex(columns=['EXT_SOURCE_3','EXT_SOURCE_2', 'EXT_SOURCE_1','CREDIT_TERM',
+                                    'AMT_GOODS_PRICE', 'AMT_CREDIT',
                                     'YEARS_BIRTH', 'AMT_INCOME_TOTAL'])
 	df_client = df_client.T
 
 	df_client = df_voisin.join(df_client)
-	
-	
-	st.dataframe(round(df_client,2))
+	df_client = df_client.style.format('{:.2f}')
+
+	st.table(df_client)
 	
 	
