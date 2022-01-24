@@ -168,18 +168,18 @@ if selection == 'Individuelle':
 	shap.summary_plot(shap_values, X, max_display=15, plot_size=(5,5))
 	st.pyplot(fig)
 
-	fig, ax = plt.subplots(figsize=(5,5))
-	explainer = shap.TreeExplainer(load_model())
-	shap_values = explainer.shap_values(X)
-	shap.summary_plot(shap_values[0], X, max_display=15)
-	st.pyplot(fig)
+	#fig, ax = plt.subplots(figsize=(5,5))
+	#explainer = shap.TreeExplainer(load_model())
+	#shap_values = explainer.shap_values(X)
+	#shap.summary_plot(shap_values[0], X, max_display=15)
+	#st.pyplot(fig)
 
 	
 
 
 if selection == 'Globale':
-	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque de la classe 0</h2>", unsafe_allow_html=True)
-	st.image('le taux de risque_mean.png')
+	#st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque de la classe 0</h2>", unsafe_allow_html=True)
+	#st.image('le taux de risque_mean.png')
 
 	st.markdown("<h2 style='text-align: center;'>Principaux indicateurs influençants le taux de risque de la classe 0</h2>", unsafe_allow_html=True)
 	st.image('le taux de risque.png')
